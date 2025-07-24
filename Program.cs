@@ -17,22 +17,26 @@ namespace TestConsole
     {
         public static Process process;
 
+        public static string SOUNDFONT_PATH = "C:\\ProgramData\\soundfonts\\";
+        public static string DEFAULT_SOUNDFONT = "touhou.sf2";
+        public static string FLUIDSYNTH_PATH = "C:\\Users\\koreandev\\Documents\\fluidsynth-2.3.5-win10-x64\\bin";
+
         class Bot
         {
             public TwitchClient client;
-            public static string kogkey = Environment.GetEnvironmentVariable("KOGGYBOT_KEY");
-            public static string BotName = "BOTNAME";
-            public static string ChannelName = "CHANNELNAME";
+            public static string BotKey = Environment.GetEnvironmentVariable("KOGGYBOT_KEY");
+            public static string BotName = "koggybot";
+            public static string ChannelName = "koreandev";
             public static Process process;
             int currentFont = 1;
 
-            string REWARD_SOUNDFONT = Environment.GetEnvironmentVariable("REWARD_SOUNDFONT");
+            string REWARD_SOUNDFONT = "a68cbb6f-c3bf-4cbd-b7fb-2a37e7a7bb46";
             string REWARD_TTS = Environment.GetEnvironmentVariable("REWARD_TTS"); //Currently unused
 
             public Bot(Process _process)
             {
                 process = _process;
-                ConnectionCredentials credentials = new ConnectionCredentials(BotName, kogkey);
+                ConnectionCredentials credentials = new ConnectionCredentials(BotName, BotKey);
                 var clientOptions = new ClientOptions
                 {
                     MessagesAllowedInPeriod = 750,
@@ -65,10 +69,10 @@ namespace TestConsole
 
             private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
             {
-                Console.WriteLine($"{e.ChatMessage.Username}: {e.ChatMessage.Message}");
                 if (e.ChatMessage.CustomRewardId == REWARD_SOUNDFONT)
                 {
-                    string path = ($"C:\\ProgramData\\soundfonts\\{e.ChatMessage.Message.ToLower()}.sf2");
+                    Console.WriteLine($"{e.ChatMessage.Username}: {e.ChatMessage.Message}");
+                    string path = ($"{SOUNDFONT_PATH}{e.ChatMessage.Message.ToLower()}.sf2");
                     if(File.Exists(path))
                     {
                         Console.WriteLine($"[REWARD]: Soundfont changing to {e.ChatMessage.Message.ToLower()}");
@@ -77,6 +81,7 @@ namespace TestConsole
                     else
                     {
                         Console.WriteLine($"[REWARD]: Soundfont not found...");
+                        client.SendReply(e.ChatMessage.Channel, e.ChatMessage.Id, "This soundfont doesn't exist!");
                         return;
                     }
                 }
@@ -104,9 +109,9 @@ namespace TestConsole
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = false;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
-            process.StartInfo.WorkingDirectory = @"C:\Users\\Documents\fluidsynth-2.3.5-win10-x64\bin";
-            process.StartInfo.FileName = @"C:\Users\koreandev\Documents\fluidsynth-2.3.5-win10-x64\bin\fluidsynth.exe";
-            process.StartInfo.Arguments = "\"C:\\ProgramData\\soundfonts\\touhou.sf2\"";
+            process.StartInfo.WorkingDirectory = FLUIDSYNTH_PATH;
+            process.StartInfo.FileName = FLUIDSYNTH_PATH + "\\fluidsynth.exe";
+            process.StartInfo.Arguments = $"\"{SOUNDFONT_PATH}{DEFAULT_SOUNDFONT}\"";
 
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.RedirectStandardOutput = true;
@@ -129,6 +134,7 @@ namespace TestConsole
             if (process != null)
             {
                 bot.client.Disconnect();
+                Bot.process.Dispose();
                 process.Dispose();
             }
         }
