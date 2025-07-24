@@ -15,7 +15,7 @@ You can use any MIDI player as long as it has selectable devices to use FluidSyn
 # ⚠️WARNING! THIS DOES NOT WORK OUT OF THE BOX⚠️
 You will need to get the OAuth key to your bot, which you get can from the [Twitch Developer Dashboard](dev.twitch.tv)
 
-Replace the BotName string with your Bot's name and replace the ChannelName string with you're channels name.
+Replace the BotName string with your Bot's name and replace the ChannelName string with your channels name.
 
 Next, you will need to get the ID of the chat reward, which you can find [here](https://www.instafluff.tv/TwitchCustomRewardID/?channel=YOURTWITCHCHANNEL), just make sure in the URL that you replace ?channel=YOURTWITCHCHANNEL with your actual channel name.
 
